@@ -3,19 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Andrew Education System Pro</title>
-    
-    <!-- 1. 載入 Tailwind CSS -->
+    <title>Andrew Edu Pro</title>
+    <link rel="icon" type="image/png" href="C:\Users\andre\Downloads\ANDREWPROJECT0319\Andrew (6).png">
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- 2. 載入 React 核心 -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    
-    <!-- 3. 載入 Babel 解析器 -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
-    <!-- Tailwind 自訂設定 -->
     <script>
         tailwind.config = {
             theme: {
@@ -40,16 +34,9 @@
     </style>
 </head>
 <body>
-    <!-- React 會渲染到這裡 -->
     <div id="root"></div>
-
-    <!-- 主要程式碼 -->
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
-
-        // ==========================================
-        // 🎨 1. SVG 圖標庫 (零依賴)
-        // ==========================================
         const Icon = ({ name, size = 24, className = "" }) => {
             const icons = {
                 user: <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />,
@@ -70,55 +57,77 @@
             );
         };
 
-        // ==========================================
-        // 🔐 2. 登入介面
-        // ==========================================
+//login
         const LoginView = ({ onLogin }) => {
             const [id, setId] = useState("");
             const [name, setName] = useState("");
 
             return (
                 <div className="relative w-full h-screen flex items-center justify-center bg-dark">
-                    <div className="absolute w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[100px] animate-pulse-slow top-0 left-10"></div>
-                    <div className="absolute w-[400px] h-[400px] bg-purple-600/20 rounded-full blur-[100px] animate-pulse-slow bottom-0 right-10" style={{animationDelay: '1s'}}></div>
-                    
-                    <div className="z-10 bg-white/5 backdrop-blur-xl border border-white/10 p-12 rounded-[40px] w-[450px] shadow-2xl animate-float">
+                    <div className="absolute w-[600px] h-[600px] bg-blue-600/20 rounded-full blur-[200px] animate-pulse-slow top-0 left-10"></div>
+                    <div className="absolute w-[400px] h-[400px] bg-purple-600/20 rounded-full blur-[200px] animate-pulse-slow bottom-0 right-10" style={{animationDelay: '1s'}}></div>
+                    <div className="z-10 bg-white/5 backdrop-blur-xl border border-white/10 p-12 rounded-[100px] w-[450px] shadow-2xl animate-float">
                         <div className="text-center mb-10">
-                            <h1 className="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400 mb-2">NKNU AIOT</h1>
+                            <h1 className="text-5xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400 mb-2">EDU ALGO AIOT</h1>
                             <p className="text-slate-400 font-bold tracking-widest text-xs">EDUCATION SYSTEM PRO</p>
+                            <p className="text-slate-400 font-bold tracking-widest text-xs">指導教授:郭家旭 教授</p>
+                            <p className="text-slate-400 font-bold tracking-widest text-xs">專題生:蔡曜丞</p>
+                            <p className="text-slate-400 font-bold tracking-widest text-xs">version 1.0</p>
                         </div>
 
                         <div className="space-y-6">
                             <div>
                                 <label className="text-xs font-bold text-blue-400 uppercase ml-2">Student ID</label>
-                                <input type="text" value={id} onChange={e=>setId(e.target.value)} placeholder="請輸入學號" className="mt-2 w-full bg-black/40 border border-slate-700 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-blue-500 font-mono" />
+                                <input type="text" value={id} onChange={e=>setId(e.target.value)} placeholder="請輸入您的學號" className="mt-2 w-full bg-black/40 border border-slate-700 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-blue-500 font-mono" />
                             </div>
                             <div>
                                 <label className="text-xs font-bold text-purple-400 uppercase ml-2">Full Name</label>
-                                <input type="text" value={name} onChange={e=>setName(e.target.value)} placeholder="請輸入姓名" className="mt-2 w-full bg-black/40 border border-slate-700 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-purple-500" />
+                                <input type="text" value={name} onChange={e=>setName(e.target.value)} placeholder="請輸入您的姓名" className="mt-2 w-full bg-black/40 border border-slate-700 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-purple-500" />
                             </div>
                             
-                            <button onClick={() => { if(id && name) onLogin({id, name}); else alert("請輸入學號與姓名！"); }} className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-4 rounded-2xl mt-8 transition-transform hover:scale-105">
+                            <button
+                                onClick={async () => {
+                                    try {
+                                        const res = await fetch('http://localhost:3001/login', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ id: id, name: name }) // 傳送學號和姓名
+                                        });
+                                        
+                                        const data = await res.json();
+
+                                        if(res.ok){
+                                            // 登入成功，將資料庫回傳的 user 資料傳給上層
+                                            onLogin({ id: data.user.id, name: data.user.name });
+                                        } else {
+                                            // 顯示資料庫回傳的錯誤訊息 (如：學號不正確)
+                                            alert(data.message);
+                                        }
+                                    } catch(e) {
+                                        alert('無法連線到後端伺服器，請檢查 server.js 是否有執行');
+                                    }
+                                }}
+                                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-4 rounded-2xl mt-8 transition-transform hover:scale-105"
+                                >
                                 LOGIN SYSTEM ➜
-                            </button>
+                                </button>
                         </div>
                     </div>
                 </div>
             );
         };
 
-        // ==========================================
-        // 🧘 3. 情緒登機門 (SEL)
-        // ==========================================
+        //SEL
         const SELOnboarding = ({ user, onComplete }) => {
             const [step, setStep] = useState(0);
             const [mood, setMood] = useState(null);
 
             const moods = [
-                { label: "能量滿滿", icon: "🚀", color: "text-green-400", border: "hover:border-green-500" },
-                { label: "平靜專注", icon: "🧘", color: "text-blue-400", border: "hover:border-blue-500" },
-                { label: "思緒混亂", icon: "🤯", color: "text-yellow-400", border: "hover:border-yellow-500" },
-                { label: "疲憊低落", icon: "🔋", color: "text-purple-400", border: "hover:border-purple-500" },
+                { label: "準備戰鬥", icon: "🔥", color: "text-red-300", border: "hover:border-red-500" },
+                { label: "能量滿滿", icon: "🚀", color: "text-green-300", border: "hover:border-green-500" },
+                { label: "平靜專注", icon: "🧘", color: "text-blue-300", border: "hover:border-blue-500" },
+                { label: "思緒混亂", icon: "🤯", color: "text-yellow-300", border: "hover:border-yellow-500" },
+                { label: "疲憊低落", icon: "🔋", color: "text-purple-300", border: "hover:border-purple-500" },
             ];
 
             if (step === 0) return (
@@ -162,14 +171,14 @@
             );
         };
 
-        // ==========================================
-        // 🗺️ 4. 城市地圖 (Dashboard)
-        // ==========================================
+        // MAP
         const CityMap = ({ onSelect }) => {
             const cities = [
                 { id: 'iot', name: '綠色科技城', sub: 'IoT 虛擬實驗室', icon: 'wind', color: 'text-emerald-400', locked: false },
                 { id: 'algo', name: '數位素養城', sub: '演算法視覺化', icon: 'brain', color: 'text-purple-400', locked: false },
-                { id: 'social', name: '社會價值城', sub: '科技倫理探討', icon: 'user', color: 'text-amber-400', locked: true },
+                { id: 'social', name: '社會價值城', sub: '科技倫理探討', icon: 'user', color: 'text-amber-400', locked: false },
+                { id: 'culture', name: '文化理解城', sub: '性別議題融入', icon: 'heart', color: 'text-red-400', locked: false },
+                { id: 'personal', name: '個人成長城', sub: '乖乖長大', icon: 'star', color: 'text-blue-400', locked: false },
             ];
 
             return (
@@ -195,9 +204,7 @@
             );
         };
 
-        // ==========================================
-        // 📡 5. IoT 實驗室 (原生 SVG 波形圖，絕對不當機)
-        // ==========================================
+        // IOT
         const IoTLab = () => {
             const [data, setData] = useState(Array(30).fill(25));
             const [fan, setFan] = useState(false);
@@ -281,9 +288,7 @@
             );
         };
 
-        // ==========================================
-        // 🧩 6. 演算法實驗室 (Algo Lab)
-        // ==========================================
+        //ALGO
         const AlgoLab = () => {
             const [arr, setArr] = useState([50, 80, 30, 90, 20, 60]);
             const [active, setActive] = useState([]);
@@ -368,9 +373,9 @@
                     {/* 左側 Sidebar */}
                     <aside className="w-72 bg-panel border-r border-slate-800 flex flex-col p-6 z-20 shadow-2xl">
                         <div className="flex items-center gap-4 mb-10">
-                            <div className="w-12 h-12 bg-gradient-to-tr from-blue-600 to-emerald-500 rounded-xl flex items-center justify-center font-black text-white shadow-lg">NK</div>
+                            <div className="w-12 h-12 bg-gradient-to-tr from-blue-600 to-emerald-500 rounded-xl flex items-center justify-center font-black text-white shadow-lg">NKNU</div>
                             <div>
-                                <div className="font-black text-xl tracking-tight">AIOT SYS</div>
+                                <div className="font-black text-xl tracking-tight">EDU TECH</div>
                                 <div className="text-[10px] text-slate-500 font-bold tracking-widest mt-0.5">EDUCATION PRO</div>
                             </div>
                         </div>
@@ -383,7 +388,7 @@
 
                         <nav className="space-y-2 flex-1">
                             <button onClick={() => setModule(null)} className={`w-full p-4 rounded-xl flex items-center gap-3 transition-colors font-bold ${!module ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}>
-                                <Icon name="map" size={20}/> 城市冒險地圖
+                                <Icon name="map" size={20}/> 城市冒險地圖【主選單】
                             </button>
                             <div className="pt-6 pb-2 pl-4 text-[10px] font-bold text-slate-600 uppercase tracking-widest">Labs</div>
                             <button onClick={() => setModule('iot')} className={`w-full p-4 rounded-xl flex items-center gap-3 transition-colors font-bold ${module==='iot' ? 'bg-slate-800 text-emerald-400 border border-emerald-900/50' : 'text-slate-400 hover:bg-slate-800'}`}>
@@ -392,6 +397,15 @@
                             <button onClick={() => setModule('algo')} className={`w-full p-4 rounded-xl flex items-center gap-3 transition-colors font-bold ${module==='algo' ? 'bg-slate-800 text-purple-400 border border-purple-900/50' : 'text-slate-400 hover:bg-slate-800'}`}>
                                 <Icon name="brain" size={20}/> 數位素養城
                             </button>
+                            <button onClick={() => setModule('algo')} className={`w-full p-4 rounded-xl flex items-center gap-3 transition-colors font-bold ${module==='algo' ? 'bg-slate-800 text-purple-400 border border-purple-900/50' : 'text-slate-400 hover:bg-slate-800'}`}>
+                                <Icon name="brain" size={20}/> 社會價值城
+                            </button>
+                            <button onClick={() => setModule('algo')} className={`w-full p-4 rounded-xl flex items-center gap-3 transition-colors font-bold ${module==='algo' ? 'bg-slate-800 text-purple-400 border border-purple-900/50' : 'text-slate-400 hover:bg-slate-800'}`}>
+                                <Icon name="brain" size={20}/> 文化理解城
+                            </button>
+                                                        <button onClick={() => setModule('algo')} className={`w-full p-4 rounded-xl flex items-center gap-3 transition-colors font-bold ${module==='algo' ? 'bg-slate-800 text-purple-400 border border-purple-900/50' : 'text-slate-400 hover:bg-slate-800'}`}>
+                                <Icon name="brain" size={20}/> 個人成長城
+                            </button>                                                 
                         </nav>
 
                         {/* HUD 模擬 */}
